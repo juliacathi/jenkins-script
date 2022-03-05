@@ -1,0 +1,119 @@
+#!/bin/bash
+
+#author:julie
+#description:installation of jenkins on centos
+
+ if
+   [ $USER != root ]
+
+   then
+   echo -e "\n you need to be root user for run this script\n"
+   sleep 3
+   exit 1
+fi
+
+
+   echo -e "\n before install jenkins, we need to install java on our system\n"
+   sudo yum install java-1.8.0-openjdk-devel
+if
+   [ $? -ne 0 ]
+   then
+   echo -e "\n issue whith installation of java\n"
+      sleep 3
+     exit 2
+  fi
+  
+  
+     echo -e "\n Enable the Jenkins repository\n"
+     sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+  if
+   [ $? -ne 0 ]
+   then
+   echo "\n you need to install wget\n"
+   sleep 3
+   exit 3
+    fi
+  
+  
+     echo -e "\n installation of wget\n"
+     sudo yum install wget -y
+     sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+  if
+     [ $? -ne 0 ]
+     then
+     echo -e "\n there is an issue whith jenkis repo please check and try again\n"
+     sleep 3
+     exit4
+  fi
+  
+     echo -e "\n now we disable key check on the repo\n"
+     sudo sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/jenkins.repo
+  if
+     [ $? -ne 0 ]
+     then
+     echo -e "\n issue whith disabling the keycheck on the repo please double check the sed comment\n"        
+     sleep 3
+      exit 5
+  fi
+  
+     echo -e "\n now we will Install the latest stable version of Jenkins\n"
+     sudo yum install jenkins
+  if
+     [ $? -ne 0 ]
+     then
+     echo -e "\n issue whith installation of jenkis\n"
+    sleep 3
+      exir 6
+  fi
+  
+     echo -e "\n now we can start  the jenkins service\n"
+  
+     sudo systemctl start jenkins
+  if
+     [ $? -ne 0 ]
+     then
+     echo -e "\n issue whith start jenkins\n"
+     sleep 3
+     exit 7
+  fi
+
+    echo -e "\n now we can enable the jenknis service\n"
+  sudo systemctl enable jenkins
+  if
+     [ $? -ne 0 ]
+     then
+     echo -e "\n issue whith enable of jenkins service\n"
+     sleep 3
+     exit 8
+  fi
+  
+     echo -e "\n now we can check the status of jenkis service\n"
+      sudo systemctl status jenkins
+  if
+      [ $? -ne 0 ]
+      then
+      echo -e "\n issue whith satus of jenkins service\n"
+      sleep 3
+      exit 9
+  fi
+
+   echo -e "\n now we can open the ports necessary for jenkins to work\n"
+ sudo firewall-cmd --permanent --zone=public --add-port=8080/tcp
+ if 
+    [ $? -ne 0 ]
+    then
+    echo -e "\n issue whith opening the port\n"
+    sleep 3
+    exit 10
+ fi
+ 
+    echo -e "\n firewall reload\n"
+    sudo firewall-cmd --reload
+ if
+    [ $? -ne 0 ]
+    then
+    echo -e "\n issue whith reloadind firewall\n"
+    sleep 3
+    exit 11
+ fi
+                         
